@@ -39,10 +39,29 @@ Editor::inst( $db, 'reference' )
 		->value( 'id' )
 		->label( 'libelle' )
 	),
-	Field::inst( 'pays.libelle' )
-    )
+	Field::inst( 'pays.libelle' ),
+
+)
+
 	->leftJoin( 'auteur','auteur.id', '=', 'reference.code_auteur' )
 	->leftJoin( 'pays','pays.id', '=', 'reference.code_pays' )
+
+	->join(
+	Mjoin::inst( 'thematiques' )
+		->link( 'reference.id', 'avoir.id_reference' )
+		->link( 'thematiques.id', 'avoir.id_thematiques' )
+		->order( 'libelle asc' )
+		->fields(
+			Field::inst( 'id' )
+				->validator( Validate::required() )
+				->options( Options::inst()
+					->table( 'thematiques' )
+					->value( 'id' )
+					->label( 'libelle' )
+				),
+			Field::inst( 'libelle' )
+		)
+	)
     ->process($_POST)
     ->json();
 

@@ -144,9 +144,10 @@ function gestion(){
   justify-content: space-between;
     }
 	div.containerPays {
-        margin: 0;
+        margin-right: 50;
     }
     div.containerAuteur {
+        margin-right: 50;
     }
 	</style>
     <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
@@ -185,7 +186,7 @@ $(document).ready(function() {
 				name: "reference.revue",
                 type:'textarea'
 			}, {
-				label: "auteur:",
+				label: "Auteur:",
 				name: "reference.code_auteur",
                 type:'select'
 			},
@@ -193,6 +194,11 @@ $(document).ready(function() {
 				label: "Pays:",
 				name: "reference.code_pays",
                 type:'select'
+			},
+            {
+				label: "Thématique:",
+				name: "thematiques[].id",
+                type:'checkbox'
 			}
 		],
         i18n: {
@@ -245,8 +251,8 @@ $(document).ready(function() {
 			{ data: "reference.datedelarret" },
 			{ data: "reference.revue" },
             { data: "auteur.nom" },
-			{ data: "pays.libelle"}
-			
+			{ data: "pays.libelle"},
+			{ data: "thematiques", render: "[, ].libelle"}
 		],
         select: {
             style:    'os',
@@ -435,6 +441,87 @@ $('#auteur').DataTable( {
 } );
 } );
 
+$(document).ready(function() {
+
+
+
+editor = new $.fn.dataTable.Editor( {
+    ajax: "../wp-content/plugins/MoteurCEDH/gestionEnregistrements/controllers/controllerThematique.php",
+    table: "#thematique",
+    fields: [ 
+        {
+            label: "Thématique :",
+            name: "libelle",
+            type:'textarea'
+        }
+        
+    ],
+    i18n: {
+        create: {
+            button: "Nouveau",
+            title:  "Créer nouvelle entrée",
+            submit: "Créer"
+        },
+        edit: {
+            button: "Modifier",
+            title:  "Modifier entrée",
+            submit: "Actualiser"
+        },
+        remove: {
+            button: "Supprimer",
+            title:  "Supprimer",
+            submit: "Supprimer",
+            confirm: {
+                _: "Etes-vous sûr de vouloir supprimer %d lignes?",
+                1: "Etes-vous sûr de vouloir supprimer 1 ligne?"
+            }
+        },
+        error: {
+            system: "Une erreur s’est produite, contacter l’administrateur système"
+        },
+        datetime: {
+            previous: 'Précédent',
+            next:     'Premier',
+            months:   [ 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre' ],
+            weekdays: [ 'Dim', 'Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam' ]
+        }
+    }
+} );
+
+
+$('#thematique').DataTable( {
+
+    dom: "Blfrtip",
+    ajax: "../wp-content/plugins/MoteurCEDH/gestionEnregistrements/controllers/controllerThematique.php",
+    lengthMenu: [ 10, 20, 50, 100, 200, 500,1000],
+    order: [[ 1, 'asc' ]],
+    columns: [
+        {
+            data: null,
+            defaultContent: '',
+            className: 'select-checkbox',
+            orderable: false
+        },
+        { data: "libelle" }
+        
+    ],
+    select: {
+        style:    'os',
+        selector: 'td:first-child'
+    },
+    
+    buttons: [
+        { extend: "create", editor: editor },
+        { extend: "edit",   editor: editor },
+        { extend: "remove", editor: editor },
+
+    ],
+
+    "language": {
+        "url": "//cdn.datatables.net/plug-ins/1.10.22/i18n/French.json",
+        }
+} );
+} );
 	</script>
 </head>
 <body class="dt-example php">
@@ -451,6 +538,7 @@ $('#auteur').DataTable( {
 							<th>Revue</th>
 							<th>Auteur</th>
                             <th>Pays</th>
+                            <th>Thématiques</th>
 						</tr>
 					</thead>
 				</table>
@@ -476,6 +564,18 @@ $('#auteur').DataTable( {
                             <th></th>
 							<th>Nom de l'auteur</th>
                             <th>Prénom de l'auteur</th>
+						</tr>
+					</thead>
+				</table>
+			</div>
+        </div>
+        <div class="containerThematique">
+            <div class="demo-html">
+				<table id="thematique" class="display" cellspacing="0" width="100%">
+					<thead>
+						<tr>
+                            <th></th>
+							<th>Thématiques</th>
 						</tr>
 					</thead>
 				</table>
